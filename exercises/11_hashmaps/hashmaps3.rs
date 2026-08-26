@@ -9,7 +9,7 @@
 use std::collections::HashMap;
 
 // A structure to store the goal details of a team.
-#[derive(Default)]
+#[derive(Default, Debug, Clone, Copy)]
 struct TeamScores {
     goals_scored: u8,
     goals_conceded: u8,
@@ -31,6 +31,53 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
         // Keep in mind that goals scored by team 1 will be the number of goals
         // conceded by team 2. Similarly, goals scored by team 2 will be the
         // number of goals conceded by team 1.
+        // scores.insert(team_2_name, TeamScores { goals_scored: team_2_score, goals_conceded: team_1_score });
+
+        if !scores.contains_key(team_1_name) {
+            let key = team_1_name;
+            let val = TeamScores {
+                goals_scored: team_1_score,
+                goals_conceded: team_2_score,
+            };
+            scores.insert(key, val);
+            // println!("{key}: {:?}", { val.clone() });
+        } else {
+            let team_1_score_value = scores.get(team_1_name).unwrap();
+            let goal_scored = team_1_score_value.goals_scored + team_1_score;
+            let goal_conceded = team_1_score_value.goals_conceded + team_2_score;
+            
+            let key = team_1_name;
+            let val = TeamScores {
+                goals_scored: goal_scored,
+                goals_conceded: goal_conceded,
+            };
+
+            scores.insert(key, val);
+            // println!("{key}: {:?}", { val.clone() });
+        }
+        
+        if !scores.contains_key(team_2_name) {
+            let key = team_2_name;
+            let val = TeamScores {
+                goals_scored: team_2_score,
+                goals_conceded: team_1_score,
+            };
+            scores.insert(key, val);
+            // println!("{key}: {:?}", { val.clone() });
+        } else {
+            let team_2_score_value = scores.get(team_2_name).unwrap();
+            let goal_scored = team_2_score_value.goals_scored + team_2_score;
+            let goal_conceded = team_2_score_value.goals_conceded + team_1_score;
+            
+            let key = team_2_name;
+            let val = TeamScores {
+                goals_scored: goal_scored,
+                goals_conceded: goal_conceded,
+            };
+    
+            scores.insert(key, val);
+            // println!("{key}: {:?}", { val.clone() });
+        }
     }
 
     scores
@@ -38,6 +85,14 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
 
 fn main() {
     // You can optionally experiment here.
+//     const RESULTS: &str = "England,France,4,2
+// France,Italy,3,1
+// Poland,Spain,2,0
+// Germany,England,2,1
+// England,Spain,1,0";
+//     let scores = build_scores_table(RESULTS);
+
+    // println!("scores: {:?}", scores);
 }
 
 #[cfg(test)]
@@ -54,9 +109,11 @@ England,Spain,1,0";
     fn build_scores() {
         let scores = build_scores_table(RESULTS);
 
-        assert!(["England", "France", "Germany", "Italy", "Poland", "Spain"]
-            .into_iter()
-            .all(|team_name| scores.contains_key(team_name)));
+        assert!(
+            ["England", "France", "Germany", "Italy", "Poland", "Spain"]
+                .into_iter()
+                .all(|team_name| scores.contains_key(team_name))
+        );
     }
 
     #[test]
