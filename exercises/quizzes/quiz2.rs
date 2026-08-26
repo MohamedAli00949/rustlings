@@ -5,9 +5,9 @@
 // - Modules
 // - Enums
 //
-// Let's build a little machine in the form of a function. As input, we're going
-// to give a list of strings and commands. These commands determine what action
-// is going to be applied to the string. It can either be:
+// Let's build a little machine in the form of a function.
+// As input, we're going to give a list of strings and commands.
+// These commands determine what action is going to be applied to the string. It can either be:
 // - Uppercase the string
 // - Trim the string
 // - Append "bar" to the string a specified amount of times
@@ -27,7 +27,23 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function as described above.
-    // pub fn transformer(input: ???) -> ??? { ??? }
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
+        let mut res = Vec::new();
+
+        for (str, command) in input {
+            match command {
+                Command::Uppercase => res.push(str.to_uppercase()),
+                Command::Trim => res.push(str.trim().to_string()),
+                Command::Append(num) =>{
+                    let mut full_str = str;
+                    full_str.push_str(&("bar".repeat(num)[..]));
+                    res.push(full_str.to_string())
+                } 
+            }
+        }
+
+        res
+    }
 }
 
 fn main() {
@@ -37,8 +53,8 @@ fn main() {
 #[cfg(test)]
 mod tests {
     // TODO: What do we need to import to have `transformer` in scope?
-    // use ???;
     use super::Command;
+    use crate::my_module::transformer;
 
     #[test]
     fn it_works() {
